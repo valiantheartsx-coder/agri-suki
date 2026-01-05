@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AgriSuki Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --green:#2e7d32;
+  --danger:#c62828;
+  --bg:#f4f6f5;
+}
+*{box-sizing:border-box;font-family:system-ui}
+body{margin:0;background:var(--bg)}
+
+/* HEADER */
+header{
+  background:var(--green);
+  color:#fff;
+  padding:12px 16px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+header h1{grid-column:2;margin:0;font-size:18px;text-align:center}
+header .right{grid-column:3;justify-self:end}
+header button{
+  background:#fff;color:var(--green);
+  border:none;padding:6px 12px;border-radius:8px;cursor:pointer;
+}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:14px;padding:12px;margin-bottom:12px}
+
+/* LOGIN */
+#loginPage{max-width:380px;margin:80px auto}
+
+/* INPUTS */
+label{font-size:13px;font-weight:600}
+.req{color:#c62828;font-size:12px}
+input,button{
+  width:100%;padding:12px;margin:6px 0;
+  border-radius:10px;border:1px solid #ccc;
+}
+button{background:var(--green);color:#fff;border:none}
+button.secondary{background:#666}
+button.danger{background:var(--danger)}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+.product{
+  border:1px solid #eee;border-radius:12px;padding:10px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.product img{
+  width:100%;height:120px;object-fit:cover;border-radius:8px;
+}
+
+/* ACTIONS */
+.actions{display:flex;gap:6px}
+.actions button{flex:1;padding:8px;font-size:14px}
+
+/* FLOATING CART */
+.cart-fab{
+  position:fixed;right:16px;bottom:16px;
+  background:var(--green);color:#fff;
+  padding:12px 16px;border-radius:999px;
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;
+}
+.cart-badge{
+  background:#fff;color:var(--green);
+  padding:2px 8px;border-radius:999px;
+  font-size:12px;font-weight:bold;
+}
+
+/* MODALS */
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;
+}
+.modal-box{
+  background:#fff;border-radius:14px;
+  padding:16px;width:90%;max-width:420px;
+}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+
+/* CART ITEMS */
+.cart-item{
+  display:grid;
+  grid-template-columns:60px 1fr auto;
+  gap:8px;align-items:center;margin-bottom:8px;
+}
+.cart-item img{
+  width:60px;height:60px;object-fit:cover;border-radius:8px;
+}
+.qty{display:flex;gap:6px;align-items:center}
+.qty button{padding:4px 8px}
+.empty-cart{text-align:center;color:#777;margin:12px 0}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="card">
+  <h2 style="text-align:center;color:#2e7d32">AgriSuki Store</h2>
+  <input id="loginUser" placeholder="Username">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button onclick="login()">Enter Store</button>
+  <p id="loginError" style="color:red;text-align:center"></p>
+</div>
+
+<!-- APP -->
+<div id="appPage" style="display:none">
+
+<header>
+  <div></div>
+  <h1>AgriSuki Store</h1>
+  <div class="right">
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ADD PRODUCT -->
+<div class="card">
+  <h3>Add Product</h3>
+
+  <label>Product Name <span class="req">(Required)</span></label>
+  <input id="prodName">
+
+  <label>Price (₱) <span class="req">(Required)</span></label>
+  <input id="prodPrice" type="number">
+
+  <label>Stock <span class="req">(Required)</span></label>
+  <input id="prodStock" type="number">
+
+  <label>Select Image <small>(Optional)</small></label>
+  <input id="prodImage" type="file" accept="image/*">
+
+  <button onclick="saveProduct()">Save</button>
+</div>
+
+<div class="card">
+  <input id="search" placeholder="Search products…" oninput="renderProducts()">
+</div>
+
+<div class="card">
+  <h3>Products</h3>
+  <div id="products" class="grid"></div>
+  <p id="noResults" style="display:none;text-align:center;color:#777">
+    No products found
+  </p>
+</div>
+
+<div class="cart-fab" onclick="openCart()">
+  🛒 Cart <span class="cart-badge" id="cartCount">0</span>
+</div>
+
+</div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="modal">
+  <div class="modal-box">
+    <h3>Cart</h3>
+    <div id="cart"></div>
+    <strong id="total"></strong>
+    <div class="modal-actions">
+      <button onclick="checkout()">Checkout</button>
+      <button class="secondary" onclick="closeCart()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+  <div class="modal-box">
+    <h3>Edit Product</h3>
+
+    <label>Product Name <span class="req">(Required)</span></label>
+    <input id="editName">
+
+    <label>Price (₱) <span class="req">(Required)</span></label>
+    <input id="editPrice" type="number">
+
+    <label>Stock <span class="req">(Required)</span></label>
+    <input id="editStock" type="number">
+
+    <label>Select Image <small>(Optional)</small></label>
+    <input id="editImage" type="file" accept="image/*">
+
+    <div class="modal-actions">
+      <button onclick="updateProduct()">Save</button>
+      <button class="secondary" onclick="closeEdit()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" class="modal">
+  <div class="modal-box">
+    <p id="confirmText"></p>
+    <div class="modal-actions">
+      <button onclick="confirmYes()">Yes</button>
+      <button class="secondary" onclick="closeConfirm()">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div id="msgModal" class="modal">
+  <div class="modal-box">
+    <p id="msgText"></p>
+    <div class="modal-actions">
+      <button onclick="closeMsg()">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* DOM */
+const productsDiv=document.getElementById("products");
+const cartDiv=document.getElementById("cart");
+const noResults=document.getElementById("noResults");
+const cartCount=document.getElementById("cartCount");
+const totalEl=document.getElementById("total");
+
+/* LOGIN */
+const LOGIN_KEY="agri_logged_in";
+const normalize=v=>v.trim().toLowerCase();
+function login(){
+  if(normalize(loginUser.value)==="admin" && normalize(loginPass.value)==="admin"){
+    localStorage.setItem(LOGIN_KEY,"true");
+    showApp();
+  }else loginError.textContent="Invalid login";
+}
+function logout(){localStorage.removeItem(LOGIN_KEY);location.reload()}
+function showApp(){loginPage.style.display="none";appPage.style.display="block"}
+
+/* IMAGE FALLBACK */
+const fallbackImg="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZWVlZSI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiM3NzciIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFncmlQcm9kdWN0PC90ZXh0Pjwvc3ZnPg==";
+
+/* STORAGE */
+const PK="agri_products", CK="agri_cart";
+
+/* Ensure ID generation */
+const uid=()=>Date.now()+Math.random();
+
+let products=JSON.parse(localStorage.getItem(PK))||[
+  {id:uid(),name:"Live Goat",price:4500,stock:5,img:fallbackImg},
+  {id:uid(),name:"Native Chicken",price:350,stock:20,img:fallbackImg},
+  {id:uid(),name:"Pig Feeds 25kg",price:1200,stock:15,img:fallbackImg},
+  {id:uid(),name:"Dog Food 10kg",price:850,stock:30,img:fallbackImg}
+];
+
+let cart=JSON.parse(localStorage.getItem(CK))||[];
+let editIndex=null;
+let confirmAction=null;
+
+/* MODALS */
+function showMsg(m){msgText.textContent=m;msgModal.style.display="flex"}
+function closeMsg(){msgModal.style.display="none"}
+function confirmBox(msg,cb){confirmText.textContent=msg;confirmAction=cb;confirmModal.style.display="flex"}
+function confirmYes(){confirmAction();closeConfirm()}
+function closeConfirm(){confirmModal.style.display="none"}
+
+/* SAVE */
+function saveProduct(){
+  const name=prodName.value.trim();
+  const price=prodPrice.value;
+  const stock=prodStock.value;
+  if(!name||!price||!stock){showMsg("Please fill up all required fields.");return}
+
+  const file=prodImage.files[0];
+  const reader=new FileReader();
+  const save=(img)=>{
+    products.push({id:uid(),name,price:+price,stock:+stock,img:img||fallbackImg});
+    localStorage.setItem(PK,JSON.stringify(products));
+    prodName.value=prodPrice.value=prodStock.value=prodImage.value="";
+    showMsg("Product added.");
+    renderProducts();
+  };
+  file?reader.onload=()=>save(reader.result):save();
+  if(file) reader.readAsDataURL(file);
+}
+
+/* EDIT */
+function openEdit(i){
+  editIndex=i;
+  const p=products[i];
+  editName.value=p.name;
+  editPrice.value=p.price;
+  editStock.value=p.stock;
+  editModal.style.display="flex";
+}
+function updateProduct(){
+  const p=products[editIndex];
+  p.name=editName.value.trim();
+  p.price=+editPrice.value;
+  p.stock=+editStock.value;
+  const file=editImage.files[0];
+  const reader=new FileReader();
+  const save=(img)=>{
+    if(img) p.img=img;
+    localStorage.setItem(PK,JSON.stringify(products));
+    showMsg("Product updated.");
+    closeEdit();renderProducts();
+  };
+  file?reader.onload=()=>save(reader.result):save();
+  if(file) reader.readAsDataURL(file);
+}
+function closeEdit(){editModal.style.display="none"}
+
+/* DELETE */
+function deleteProduct(i){
+  confirmBox("Delete this product?",()=>{
+    products.splice(i,1);
+    localStorage.setItem(PK,JSON.stringify(products));
+    showMsg("Product deleted.");
+    renderProducts();
+  });
+}
+
+/* STORE */
+function renderProducts(){
+  productsDiv.innerHTML="";
+  let found=false;
+  const q=search.value.toLowerCase();
+  products.forEach((p,i)=>{
+    if(!p.name.toLowerCase().includes(q))return;
+    found=true;
+    productsDiv.innerHTML+=`
+      <div class="product">
+        <img src="${p.img}" onerror="this.src='${fallbackImg}'">
+        <strong>${p.name}</strong>
+        ₱${p.price} | Stock: ${p.stock}
+        <div class="actions">
+          <button onclick="addToCart(${p.id})">Buy</button>
+          <button onclick="openEdit(${i})">Edit</button>
+          <button class="danger" onclick="deleteProduct(${i})">Delete</button>
+        </div>
+      </div>`;
+  });
+  noResults.style.display=found?"none":"block";
+}
+
+/* CART */
+function addToCart(id){
+  const p=products.find(x=>x.id===id);
+  const item=cart.find(c=>c.id===id);
+  item?item.qty++:cart.push({...p,qty:1});
+  localStorage.setItem(CK,JSON.stringify(cart));
+  updateCartCount();
+  showMsg("Added to cart.");
+}
+function updateCartCount(){cartCount.textContent=cart.reduce((t,c)=>t+c.qty,0)}
+function openCart(){cartModal.style.display="flex";renderCart()}
+function closeCart(){cartModal.style.display="none"}
+function renderCart(){
+  cartDiv.innerHTML="";
+  let total=0;
+  if(cart.length===0){
+    cartDiv.innerHTML='<p class="empty-cart">🛒 Your cart is empty</p>';
+    totalEl.textContent="";
+    return;
+  }
+  cart.forEach((c,i)=>{
+    total+=c.price*c.qty;
+    cartDiv.innerHTML+=`
+      <div class="cart-item">
+        <img src="${c.img}">
+        <div><strong>${c.name}</strong><br>₱${c.price}</div>
+        <div class="qty">
+          <span>Qty</span>
+          <button onclick="changeQty(${i},-1)">−</button>
+          ${c.qty}
+          <button onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>`;
+  });
+  totalEl.textContent="Total: ₱"+total;
+}
+function changeQty(i,d){
+  cart[i].qty+=d;
+  if(cart[i].qty<=0) cart.splice(i,1);
+  localStorage.setItem(CK,JSON.stringify(cart));
+  renderCart();updateCartCount();
+}
+function checkout(){
+  if(!cart.length){showMsg("Cart is empty.");return}
+  showMsg("Checkout successful.");
+  cart=[];localStorage.setItem(CK,"[]");
+  updateCartCount();closeCart();
+}
+
+/* INIT */
+if(localStorage.getItem(LOGIN_KEY)==="true"){showApp()}
+renderProducts();
+updateCartCount();
+</script>
+
+</body>
+</html>
