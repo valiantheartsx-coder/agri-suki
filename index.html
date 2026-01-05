@@ -8,6 +8,7 @@
 <style>
 :root{
   --green:#2e7d32;
+  --light-green:#4caf50;
   --danger:#c62828;
   --bg:#f4f6f5;
 }
@@ -19,89 +20,267 @@ header{
   background:var(--green);
   color:#fff;
   padding:12px 16px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
+  display:flex;
   align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
 }
-header h1{grid-column:2;margin:0;font-size:18px;text-align:center}
-header .right{grid-column:3;justify-self:end}
-header button{
+header h1{margin:0;font-size:18px;flex:1;text-align:center;min-width:150px}
+header .left{display:flex;gap:8px}
+header .left button{
   background:#fff;color:var(--green);
-  border:none;padding:6px 12px;border-radius:8px;cursor:pointer;
+  border:none;padding:8px 16px;border-radius:8px;cursor:pointer;
+  font-size:14px;font-weight:600;
+}
+header .right button{
+  background:rgba(255,255,255,0.2);color:#fff;
+  border:1px solid rgba(255,255,255,0.3);
+  padding:6px 12px;border-radius:8px;cursor:pointer;
 }
 
 /* LAYOUT */
 .container{max-width:1100px;margin:auto;padding:12px}
-.card{background:#fff;border-radius:14px;padding:12px;margin-bottom:12px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
 
 /* LOGIN */
 #loginPage{max-width:380px;margin:80px auto}
 
 /* INPUTS */
-label{font-size:13px;font-weight:600}
+label{font-size:13px;font-weight:600;display:block;margin-top:12px}
 .req{color:#c62828;font-size:12px}
-input,button{
+input,button,select,textarea{
   width:100%;padding:12px;margin:6px 0;
-  border-radius:10px;border:1px solid #ccc;
+  border-radius:10px;border:1px solid #ddd;
+  font-size:14px;
 }
-button{background:var(--green);color:#fff;border:none}
+button{background:var(--green);color:#fff;border:none;cursor:pointer;font-weight:600}
+button:hover{background:var(--light-green)}
 button.secondary{background:#666}
+button.secondary:hover{background:#555}
 button.danger{background:var(--danger)}
+button.danger:hover{background:#b71c1c}
+
+/* IMAGE PREVIEW */
+.img-preview-container{
+  margin:10px 0;
+  display:none;
+}
+.img-preview-container.show{display:block}
+.img-preview-wrapper{
+  position:relative;
+  display:inline-block;
+  max-width:100%;
+}
+.img-preview{
+  max-width:100%;
+  height:auto;
+  max-height:200px;
+  border-radius:8px;
+  border:2px solid #ddd;
+}
+.img-preview-remove{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+  width:auto;
+}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-@media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
 
 .product{
-  border:1px solid #eee;border-radius:12px;padding:10px;
-  display:flex;flex-direction:column;gap:8px;
+  border:1px solid #e0e0e0;
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:transform 0.2s,box-shadow 0.2s;
+  background:#fff;
+}
+.product:hover{
+  transform:translateY(-4px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.product-img-wrapper{
+  width:100%;
+  height:160px;
+  background:#f5f5f5;
+  position:relative;
+  overflow:hidden;
 }
 .product img{
-  width:100%;height:120px;object-fit:cover;border-radius:8px;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.product-info{
+  padding:12px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.product-name{
+  font-weight:600;
+  font-size:15px;
+  color:#333;
+  margin:0;
+}
+.product-price{
+  font-size:18px;
+  font-weight:700;
+  color:var(--green);
+}
+.product-stock{
+  font-size:13px;
+  color:#666;
+  background:#f5f5f5;
+  padding:4px 8px;
+  border-radius:6px;
+  display:inline-block;
 }
 
 /* ACTIONS */
-.actions{display:flex;gap:6px}
-.actions button{flex:1;padding:8px;font-size:14px}
+.actions{display:flex;gap:6px;margin-top:auto}
+.actions button{flex:1;padding:8px;font-size:13px;margin:0}
 
 /* FLOATING CART */
 .cart-fab{
   position:fixed;right:16px;bottom:16px;
   background:var(--green);color:#fff;
-  padding:12px 16px;border-radius:999px;
-  display:flex;align-items:center;gap:8px;
+  padding:14px 20px;border-radius:999px;
+  display:flex;align-items:center;gap:10px;
   cursor:pointer;
+  box-shadow:0 4px 12px rgba(46,125,50,0.4);
+  font-weight:600;
+  z-index:100;
 }
+.cart-fab:hover{background:var(--light-green)}
 .cart-badge{
   background:#fff;color:var(--green);
-  padding:2px 8px;border-radius:999px;
-  font-size:12px;font-weight:bold;
+  padding:4px 10px;border-radius:999px;
+  font-size:13px;font-weight:bold;
 }
 
 /* MODALS */
 .modal{
   position:fixed;inset:0;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,.5);
   display:none;align-items:center;justify-content:center;
+  z-index:1000;
+  padding:16px;
 }
 .modal-box{
   background:#fff;border-radius:14px;
-  padding:16px;width:90%;max-width:420px;
+  padding:20px;width:100%;max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
 }
-.modal-actions{display:flex;gap:8px;margin-top:12px}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-actions button{margin:0}
 
 /* CART ITEMS */
 .cart-item{
   display:grid;
-  grid-template-columns:60px 1fr auto;
-  gap:8px;align-items:center;margin-bottom:8px;
+  grid-template-columns:70px 1fr auto;
+  gap:10px;align-items:center;
+  padding:12px;
+  background:#f9f9f9;
+  border-radius:8px;
+  margin-bottom:10px;
 }
 .cart-item img{
-  width:60px;height:60px;object-fit:cover;border-radius:8px;
+  width:70px;height:70px;object-fit:cover;border-radius:8px;
 }
-.qty{display:flex;gap:6px;align-items:center}
-.qty button{padding:4px 8px}
-.empty-cart{text-align:center;color:#777;margin:12px 0}
+.cart-item-info{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.cart-item-name{font-weight:600;font-size:14px}
+.cart-item-price{color:var(--green);font-size:13px}
+.qty{display:flex;gap:6px;align-items:center;flex-direction:column}
+.qty-controls{display:flex;gap:4px;align-items:center}
+.qty button{padding:6px 12px;margin:0;width:auto;min-width:32px}
+.empty-cart{text-align:center;color:#777;margin:32px 0;font-size:16px}
+
+/* CHECKOUT FORM */
+.checkout-form label{margin-top:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ORDER HISTORY */
+.order-card{
+  border:1px solid #e0e0e0;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:12px;
+  background:#fff;
+}
+.order-header{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  align-items:center;
+  gap:16px;
+  margin-bottom:12px;
+  padding-bottom:12px;
+  border-bottom:2px solid #f0f0f0;
+}
+.order-id{font-weight:700;color:#333;font-size:15px}
+.order-date{font-size:13px;color:#666}
+.order-total{font-size:18px;font-weight:700;color:var(--green)}
+.order-items{margin:12px 0}
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  font-size:14px;
+  border-bottom:1px solid #f5f5f5;
+}
+.order-customer{
+  background:#f9f9f9;
+  padding:12px;
+  border-radius:8px;
+  margin-top:12px;
+  font-size:13px;
+}
+.order-customer strong{display:block;margin-bottom:4px;color:#333}
+.no-orders{
+  text-align:center;
+  padding:48px 20px;
+  color:#999;
+}
+.no-orders-icon{font-size:48px;margin-bottom:16px}
+.no-orders-text{font-size:16px;font-weight:600}
+
+@media(max-width:768px){
+  header{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:12px;
+  }
+  header .left{order:1}
+  header h1{order:2;text-align:center}
+  header .right{order:3}
+  .form-row{grid-template-columns:1fr}
+  .cart-item{grid-template-columns:60px 1fr}
+  .qty{grid-column:2;flex-direction:row;justify-content:flex-end;margin-top:8px}
+  .order-header{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .order-header > *{
+    grid-column:1;
+  }
+}
 </style>
 </head>
 
@@ -110,6 +289,7 @@ button.danger{background:var(--danger)}
 <!-- LOGIN -->
 <div id="loginPage" class="card">
   <h2 style="text-align:center;color:#2e7d32">AgriSuki Store</h2>
+  <p style="text-align:center;color:#666;font-size:13px;margin:8px 0 16px">Demo Credentials: Username: <strong>admin</strong> | Password: <strong>admin</strong></p>
   <input id="loginUser" placeholder="Username">
   <input id="loginPass" type="password" placeholder="Password">
   <button onclick="login()">Enter Store</button>
@@ -120,7 +300,9 @@ button.danger{background:var(--danger)}
 <div id="appPage" style="display:none">
 
 <header>
-  <div></div>
+  <div class="left">
+    <button onclick="showOrderHistory()">Order History</button>
+  </div>
   <h1>AgriSuki Store</h1>
   <div class="right">
     <button onclick="logout()">Logout</button>
@@ -137,19 +319,25 @@ button.danger{background:var(--danger)}
   <input id="prodName">
 
   <label>Price (₱) <span class="req">(Required)</span></label>
-  <input id="prodPrice" type="number">
+  <input id="prodPrice" type="number" step="0.01">
 
   <label>Stock <span class="req">(Required)</span></label>
   <input id="prodStock" type="number">
 
   <label>Select Image <small>(Optional)</small></label>
-  <input id="prodImage" type="file" accept="image/*">
+  <input id="prodImage" type="file" accept="image/*" onchange="previewAddImage(event)">
+  <div id="addImgPreview" class="img-preview-container">
+    <div class="img-preview-wrapper">
+      <img id="addImgPreviewImg" class="img-preview">
+      <button class="img-preview-remove" onclick="clearAddImage()">✕ Remove</button>
+    </div>
+  </div>
 
-  <button onclick="saveProduct()">Save</button>
+  <button onclick="saveProduct()">Save Product</button>
 </div>
 
 <div class="card">
-  <input id="search" placeholder="Search products…" oninput="renderProducts()">
+  <input id="search" placeholder="🔍 Search products…" oninput="renderProducts()">
 </div>
 
 <div class="card">
@@ -161,7 +349,7 @@ button.danger{background:var(--danger)}
 </div>
 
 <div class="cart-fab" onclick="openCart()">
-  🛒 Cart <span class="cart-badge" id="cartCount">0</span>
+  Cart <span class="cart-badge" id="cartCount">0</span>
 </div>
 
 </div>
@@ -170,12 +358,79 @@ button.danger{background:var(--danger)}
 <!-- CART MODAL -->
 <div id="cartModal" class="modal">
   <div class="modal-box">
-    <h3>Cart</h3>
+    <h3>Shopping Cart</h3>
     <div id="cart"></div>
-    <strong id="total"></strong>
+    <div id="cartTotalSection" style="display:none;margin:16px 0;padding:16px;background:#f0f7f0;border-radius:8px">
+      <strong id="total" style="font-size:20px;color:#2e7d32"></strong>
+    </div>
     <div class="modal-actions">
-      <button onclick="checkout()">Checkout</button>
+      <button onclick="proceedToCheckout()">Proceed to Checkout</button>
       <button class="secondary" onclick="closeCart()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div id="checkoutModal" class="modal">
+  <div class="modal-box">
+    <h3>Checkout Information</h3>
+    
+    <label>Full Name <span class="req">(Required)</span></label>
+    <input id="custName" placeholder="Juan Dela Cruz">
+    
+    <label>Phone Number <span class="req">(Required)</span></label>
+    <input id="custPhone" type="tel" placeholder="09XX XXX XXXX">
+    
+    <label>Email Address</label>
+    <input id="custEmail" type="email" placeholder="email@example.com">
+    
+    <label>Complete Address <span class="req">(Required)</span></label>
+    <textarea id="custAddress" rows="3" placeholder="House No., Street, Barangay, City, Province"></textarea>
+    
+    <div class="form-row">
+      <div>
+        <label>Payment Method <span class="req">(Required)</span></label>
+        <select id="paymentMethod">
+          <option value="">Select payment</option>
+          <option value="cod">Cash on Delivery</option>
+          <option value="gcash">GCash</option>
+          <option value="bank">Bank Transfer</option>
+        </select>
+      </div>
+    </div>
+    
+    <label>Notes (Optional)</label>
+    <textarea id="custNotes" rows="2" placeholder="Special instructions or requests"></textarea>
+    
+    <div style="margin:16px 0;padding:16px;background:#f0f7f0;border-radius:8px">
+      <strong id="checkoutTotal" style="font-size:20px;color:#2e7d32"></strong>
+    </div>
+    
+    <div class="modal-actions">
+      <button onclick="completeCheckout()">Place Order</button>
+      <button class="secondary" onclick="closeCheckout()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER HISTORY MODAL -->
+<div id="orderHistoryModal" class="modal">
+  <div class="modal-box">
+    <h3>Order History</h3>
+    <div id="orderHistory"></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeOrderHistory()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW ORDER MODAL -->
+<div id="viewOrderModal" class="modal">
+  <div class="modal-box">
+    <h3>Order Details</h3>
+    <div id="viewOrderContent"></div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeViewOrder()">Close</button>
     </div>
   </div>
 </div>
@@ -189,16 +444,22 @@ button.danger{background:var(--danger)}
     <input id="editName">
 
     <label>Price (₱) <span class="req">(Required)</span></label>
-    <input id="editPrice" type="number">
+    <input id="editPrice" type="number" step="0.01">
 
     <label>Stock <span class="req">(Required)</span></label>
     <input id="editStock" type="number">
 
     <label>Select Image <small>(Optional)</small></label>
-    <input id="editImage" type="file" accept="image/*">
+    <input id="editImage" type="file" accept="image/*" onchange="previewEditImage(event)">
+    <div id="editImgPreview" class="img-preview-container">
+      <div class="img-preview-wrapper">
+        <img id="editImgPreviewImg" class="img-preview">
+        <button class="img-preview-remove" onclick="clearEditImage()">✕ Remove</button>
+      </div>
+    </div>
 
     <div class="modal-actions">
-      <button onclick="updateProduct()">Save</button>
+      <button onclick="updateProduct()">Save Changes</button>
       <button class="secondary" onclick="closeEdit()">Cancel</button>
     </div>
   </div>
@@ -248,20 +509,155 @@ function showApp(){loginPage.style.display="none";appPage.style.display="block"}
 /* IMAGE FALLBACK */
 const fallbackImg="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZWVlZSI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiM3NzciIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFncmlQcm9kdWN0PC90ZXh0Pjwvc3ZnPg==";
 
+/* IMAGE PREVIEW */
+function previewAddImage(e){
+  const file=e.target.files[0];
+  if(file){
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      addImgPreviewImg.src=ev.target.result;
+      addImgPreview.classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function clearAddImage(){
+  prodImage.value='';
+  addImgPreview.classList.remove('show');
+}
+function previewEditImage(e){
+  const file=e.target.files[0];
+  if(file){
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      editImgPreviewImg.src=ev.target.result;
+      editImgPreview.classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function clearEditImage(){
+  editImage.value='';
+  editImgPreview.classList.remove('show');
+}
+
 /* STORAGE */
-const PK="agri_products", CK="agri_cart";
+const PK="agri_products", CK="agri_cart", OK="agri_orders";
+
+/* Safe storage with compression and image size limit */
+const MAX_IMAGE_SIZE = 500000; // 500KB limit per image
+
+function compressImage(dataUrl, callback) {
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    let width = img.width;
+    let height = img.height;
+    
+    // Scale down if too large
+    const maxDim = 800;
+    if (width > maxDim || height > maxDim) {
+      if (width > height) {
+        height = (height / width) * maxDim;
+        width = maxDim;
+      } else {
+        width = (width / height) * maxDim;
+        height = maxDim;
+      }
+    }
+    
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    
+    // Try different quality levels
+    let quality = 0.7;
+    let result = canvas.toDataURL('image/jpeg', quality);
+    
+    // Reduce quality if still too large
+    while (result.length > MAX_IMAGE_SIZE && quality > 0.1) {
+      quality -= 0.1;
+      result = canvas.toDataURL('image/jpeg', quality);
+    }
+    
+    callback(result);
+  };
+  img.src = dataUrl;
+}
+
+function safeSet(key, data) {
+  try {
+    const str = JSON.stringify(data);
+    localStorage.setItem(key, str);
+    return true;
+  } catch (e) {
+    if (e.name === 'QuotaExceededError') {
+      // Store only essential data, remove images from older items
+      if (key === CK) {
+        const simplified = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          qty: item.qty,
+          img: fallbackImg
+        }));
+        localStorage.setItem(key, JSON.stringify(simplified));
+        return true;
+      }
+      if (key === OK) {
+        // Keep only last 50 orders, remove images
+        const simplified = data.slice(0, 50).map(order => ({
+          ...order,
+          items: order.items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            qty: item.qty
+          }))
+        }));
+        localStorage.setItem(key, JSON.stringify(simplified));
+        return true;
+      }
+      if (key === PK) {
+        // Remove images from products and try again
+        const simplified = data.map(item => ({
+          ...item,
+          img: fallbackImg
+        }));
+        localStorage.setItem(key, JSON.stringify(simplified));
+        showMsg("Storage limit reached. Images removed to save space.");
+        return true;
+      }
+    }
+    console.error('Storage error:', e);
+    showMsg("Storage error: Unable to save. Try using smaller images.");
+    return false;
+  }
+}
+
+function safeGet(key, defaultValue) {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (e) {
+    console.error('Parse error:', e);
+    return defaultValue;
+  }
+}
 
 /* Ensure ID generation */
 const uid=()=>Date.now()+Math.random();
 
-let products=JSON.parse(localStorage.getItem(PK))||[
-  {id:uid(),name:"Live Goat",price:4500,stock:5,img:fallbackImg},
-  {id:uid(),name:"Native Chicken",price:350,stock:20,img:fallbackImg},
-  {id:uid(),name:"Pig Feeds 25kg",price:1200,stock:15,img:fallbackImg},
-  {id:uid(),name:"Dog Food 10kg",price:850,stock:30,img:fallbackImg}
-];
+let products=safeGet(PK, [
+  {id:uid(),name:"Live Goat",price:4500,stock:5,img:"./goat.jpg"},
+  {id:uid(),name:"Native Chicken",price:350,stock:20,img:"./chicken.jpg"},
+  {id:uid(),name:"Pig Feeds 25kg",price:1200,stock:15,img:"./feeds.jpg"},
+  {id:uid(),name:"Dog Food 10kg",price:850,stock:30,img:"./dogfood.jpg"},
+]);
 
-let cart=JSON.parse(localStorage.getItem(CK))||[];
+let cart=safeGet(CK, []);
+let orders=safeGet(OK, []);
 let editIndex=null;
 let confirmAction=null;
 
@@ -277,16 +673,30 @@ function saveProduct(){
   const name=prodName.value.trim();
   const price=prodPrice.value;
   const stock=prodStock.value;
-  if(!name||!price||!stock){showMsg("Please fill up all required fields.");return}
+  if(!name||!price||!stock){showMsg("Please fill up all required fields");return}
 
   const file=prodImage.files[0];
   const reader=new FileReader();
   const save=(img)=>{
-    products.push({id:uid(),name,price:+price,stock:+stock,img:img||fallbackImg});
-    localStorage.setItem(PK,JSON.stringify(products));
-    prodName.value=prodPrice.value=prodStock.value=prodImage.value="";
-    showMsg("Product added.");
-    renderProducts();
+    if(img && img.length > MAX_IMAGE_SIZE) {
+      compressImage(img, (compressed) => {
+        products.push({id:uid(),name,price:+price,stock:+stock,img:compressed});
+        if(safeSet(PK, products)) {
+          prodName.value=prodPrice.value=prodStock.value=prodImage.value="";
+          clearAddImage();
+          showMsg("Product added successfully");
+          renderProducts();
+        }
+      });
+    } else {
+      products.push({id:uid(),name,price:+price,stock:+stock,img:img||fallbackImg});
+      if(safeSet(PK, products)) {
+        prodName.value=prodPrice.value=prodStock.value=prodImage.value="";
+        clearAddImage();
+        showMsg("Product added successfully");
+        renderProducts();
+      }
+    }
   };
   file?reader.onload=()=>save(reader.result):save();
   if(file) reader.readAsDataURL(file);
@@ -299,32 +709,64 @@ function openEdit(i){
   editName.value=p.name;
   editPrice.value=p.price;
   editStock.value=p.stock;
+  if(p.img && p.img!==fallbackImg){
+    editImgPreviewImg.src=p.img;
+    editImgPreview.classList.add('show');
+  }else{
+    editImgPreview.classList.remove('show');
+  }
   editModal.style.display="flex";
 }
 function updateProduct(){
+  const name=editName.value.trim();
+  const price=editPrice.value;
+  const stock=editStock.value;
+  if(!name||!price||!stock){showMsg("Please fill up all required fields");return}
+  
   const p=products[editIndex];
-  p.name=editName.value.trim();
-  p.price=+editPrice.value;
-  p.stock=+editStock.value;
+  p.name=name;
+  p.price=+price;
+  p.stock=+stock;
   const file=editImage.files[0];
   const reader=new FileReader();
   const save=(img)=>{
-    if(img) p.img=img;
-    localStorage.setItem(PK,JSON.stringify(products));
-    showMsg("Product updated.");
-    closeEdit();renderProducts();
+    if(img) {
+      if(img.length > MAX_IMAGE_SIZE) {
+        compressImage(img, (compressed) => {
+          p.img=compressed;
+          if(safeSet(PK, products)) {
+            showMsg("Product updated successfully");
+            closeEdit();renderProducts();
+          }
+        });
+      } else {
+        p.img=img;
+        if(safeSet(PK, products)) {
+          showMsg("Product updated successfully");
+          closeEdit();renderProducts();
+        }
+      }
+    } else {
+      if(safeSet(PK, products)) {
+        showMsg("Product updated successfully");
+        closeEdit();renderProducts();
+      }
+    }
   };
   file?reader.onload=()=>save(reader.result):save();
   if(file) reader.readAsDataURL(file);
 }
-function closeEdit(){editModal.style.display="none"}
+function closeEdit(){
+  editModal.style.display="none";
+  clearEditImage();
+}
 
 /* DELETE */
 function deleteProduct(i){
-  confirmBox("Delete this product?",()=>{
+  confirmBox("Are you sure you want to delete this product?",()=>{
     products.splice(i,1);
-    localStorage.setItem(PK,JSON.stringify(products));
-    showMsg("Product deleted.");
+    safeSet(PK, products);
+    showMsg("Product deleted successfully");
     renderProducts();
   });
 }
@@ -339,13 +781,18 @@ function renderProducts(){
     found=true;
     productsDiv.innerHTML+=`
       <div class="product">
-        <img src="${p.img}" onerror="this.src='${fallbackImg}'">
-        <strong>${p.name}</strong>
-        ₱${p.price} | Stock: ${p.stock}
-        <div class="actions">
-          <button onclick="addToCart(${p.id})">Buy</button>
-          <button onclick="openEdit(${i})">Edit</button>
-          <button class="danger" onclick="deleteProduct(${i})">Delete</button>
+        <div class="product-img-wrapper">
+          <img src="${p.img}" onerror="this.src='${fallbackImg}'">
+        </div>
+        <div class="product-info">
+          <h4 class="product-name">${p.name}</h4>
+          <div class="product-price">₱${p.price.toFixed(2)}</div>
+          <div class="product-stock">📦Stock: ${p.stock}</div>
+          <div class="actions">
+            <button onclick="addToCart(${p.id})">Buy</button>
+            <button class="secondary" onclick="openEdit(${i})">Edit</button>
+            <button class="danger" onclick="deleteProduct(${i})">Delete</button>
+          </div>
         </div>
       </div>`;
   });
@@ -355,57 +802,240 @@ function renderProducts(){
 /* CART */
 function addToCart(id){
   const p=products.find(x=>x.id===id);
+  if(p.stock<=0){showMsg("Product out of stock");return}
   const item=cart.find(c=>c.id===id);
-  item?item.qty++:cart.push({...p,qty:1});
-  localStorage.setItem(CK,JSON.stringify(cart));
+  if(item){
+    if(item.qty>=p.stock){showMsg("Cannot add more. Stock limit reached!");return}
+    item.qty++;
+  }else{
+    cart.push({id:p.id,name:p.name,price:p.price,img:p.img,qty:1});
+  }
+  safeSet(CK, cart);
   updateCartCount();
-  showMsg("Added to cart.");
+  showMsg("Added to cart");
 }
 function updateCartCount(){cartCount.textContent=cart.reduce((t,c)=>t+c.qty,0)}
-function openCart(){cartModal.style.display="flex";renderCart()}
-function closeCart(){cartModal.style.display="none"}
+function openCart(){
+  cartModal.style.display="flex";
+  renderCart();
+}
+
+function closeCart(){
+  cartModal.style.display="none";
+}
+
 function renderCart(){
   cartDiv.innerHTML="";
   let total=0;
+  const totalSection=document.getElementById("cartTotalSection");
+
   if(cart.length===0){
-    cartDiv.innerHTML='<p class="empty-cart">🛒 Your cart is empty</p>';
+    cartDiv.innerHTML='<p class="empty-cart">Your cart is empty</p>';
     totalEl.textContent="";
+    totalSection.style.display="none";
     return;
   }
+
+  totalSection.style.display="block";
+
   cart.forEach((c,i)=>{
     total+=c.price*c.qty;
     cartDiv.innerHTML+=`
       <div class="cart-item">
         <img src="${c.img}">
-        <div><strong>${c.name}</strong><br>₱${c.price}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${c.name}</div>
+          <div class="cart-item-price">₱${c.price.toFixed(2)} each</div>
+        </div>
         <div class="qty">
-          <span>Qty</span>
-          <button onclick="changeQty(${i},-1)">−</button>
-          ${c.qty}
-          <button onclick="changeQty(${i},1)">+</button>
+          <div class="qty-controls">
+            <button onclick="changeQty(${i},-1)">−</button>
+            <span style="min-width:30px;text-align:center;font-weight:600">${c.qty}</span>
+            <button onclick="changeQty(${i},1)">+</button>
+          </div>
+          <small style="color:#666">₱${(c.price*c.qty).toFixed(2)}</small>
         </div>
       </div>`;
   });
-  totalEl.textContent="Total: ₱"+total;
+
+  totalEl.textContent="Total: ₱"+total.toFixed(2);
 }
+
 function changeQty(i,d){
+  const p=products.find(x=>x.id===cart[i].id);
   cart[i].qty+=d;
-  if(cart[i].qty<=0) cart.splice(i,1);
-  localStorage.setItem(CK,JSON.stringify(cart));
-  renderCart();updateCartCount();
+
+  if(cart[i].qty<=0){
+    cart.splice(i,1);
+  }else if(cart[i].qty>p.stock){
+    showMsg("Cannot exceed available stock");
+    cart[i].qty=p.stock;
+  }
+
+  safeSet(CK, cart);
+  renderCart();
+  updateCartCount();
 }
-function checkout(){
-  if(!cart.length){showMsg("Cart is empty.");return}
-  showMsg("Checkout successful.");
-  cart=[];localStorage.setItem(CK,"[]");
-  updateCartCount();closeCart();
+
+/* CHECKOUT */
+function proceedToCheckout(){
+  if(!cart.length){showMsg("Cart is empty");return}
+
+  const total=cart.reduce((t,c)=>t+(c.price*c.qty),0);
+  checkoutTotal.textContent="Total: ₱"+total.toFixed(2);
+
+  closeCart();
+  checkoutModal.style.display="flex";
+}
+
+function closeCheckout(){
+  checkoutModal.style.display="none";
+}
+
+function completeCheckout(){
+  const name=custName.value.trim();
+  const phone=custPhone.value.trim();
+  const address=custAddress.value.trim();
+  const payment=paymentMethod.value;
+
+  if(!name||!phone||!address||!payment){
+    showMsg("Please fill up all required fields");
+    return;
+  }
+
+  const order={
+    id:uid(),
+    date:new Date().toLocaleString(),
+    items:cart.map(c=>({
+      id:c.id,
+      name:c.name,
+      price:c.price,
+      qty:c.qty
+    })),
+    total:cart.reduce((t,c)=>t+(c.price*c.qty),0),
+    customer:{
+      name,
+      phone,
+      email:custEmail.value.trim(),
+      address,
+      payment,
+      notes:custNotes.value.trim()
+    }
+  };
+
+  orders.unshift(order);
+  safeSet(OK, orders);
+
+  cart.forEach(c=>{
+    const p=products.find(x=>x.id===c.id);
+    if(p) p.stock-=c.qty;
+  });
+
+  safeSet(PK, products);
+  cart=[];
+  safeSet(CK, cart);
+
+  custName.value=custPhone.value=custEmail.value=custAddress.value=custNotes.value="";
+  paymentMethod.value="";
+
+  closeCheckout();
+  updateCartCount();
+  renderProducts();
+  showMsg("Order placed successfully");
+}
+
+/* ORDER HISTORY */
+function showOrderHistory(){
+  orderHistoryModal.style.display="flex";
+  renderOrderHistory();
+}
+
+function closeOrderHistory(){
+  orderHistoryModal.style.display="none";
+}
+
+function renderOrderHistory(){
+  const div=document.getElementById("orderHistory");
+
+  if(orders.length===0){
+    div.innerHTML=`
+      <div class="no-orders">
+        <div class="no-orders-icon">📭</div>
+        <div class="no-orders-text">No orders yet</div>
+      </div>`;
+    return;
+  }
+
+  div.innerHTML="";
+  orders.forEach(o=>{
+    div.innerHTML+=`
+      <div class="order-card">
+        <div class="order-header">
+          <div class="order-id">Order #${o.id.toString().slice(-8)}</div>
+          <div class="order-date">${o.date}</div>
+          <div class="order-total">₱${o.total.toFixed(2)}</div>
+          <button onclick="viewOrder('${o.id}')" style="width:auto;padding:8px 16px;margin:0">
+            View Details
+          </button>
+        </div>
+      </div>`;
+  });
+}
+
+function viewOrder(orderId){
+  const order=orders.find(o=>o.id==orderId);
+  if(!order) return;
+
+  const content=document.getElementById("viewOrderContent");
+  content.innerHTML=`
+    <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid #f0f0f0">
+      <div style="font-weight:700;font-size:16px;margin-bottom:8px">
+        Order #${order.id.toString().slice(-8)}
+      </div>
+      <div style="color:#666;font-size:13px">${order.date}</div>
+      <div style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:8px">
+        ₱${order.total.toFixed(2)}
+      </div>
+    </div>
+
+    <div style="margin:16px 0">
+      <strong style="display:block;margin-bottom:8px">Items Ordered:</strong>
+      ${order.items.map(item=>`
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5">
+          <span>${item.name} × ${item.qty}</span>
+          <span style="font-weight:600">₱${(item.price*item.qty).toFixed(2)}</span>
+        </div>
+      `).join("")}
+    </div>
+
+    <div style="background:#f9f9f9;padding:16px;border-radius:8px;margin-top:16px">
+      <strong style="display:block;margin-bottom:12px;font-size:15px">Customer Information</strong>
+      <div style="font-size:14px;line-height:1.8">
+        <div><strong>Name:</strong> ${order.customer.name}</div>
+        <div><strong>Phone:</strong> ${order.customer.phone}</div>
+        ${order.customer.email?`<div><strong>Email:</strong> ${order.customer.email}</div>`:""}
+        <div><strong>Address:</strong> ${order.customer.address}</div>
+        <div style="margin-top:12px">
+          <strong>Payment:</strong> ${order.customer.payment.toUpperCase()}
+        </div>
+        ${order.customer.notes?`<div style="margin-top:8px"><strong>Notes:</strong> ${order.customer.notes}</div>`:""}
+      </div>
+    </div>
+  `;
+
+  viewOrderModal.style.display="flex";
+}
+
+function closeViewOrder(){
+  viewOrderModal.style.display="none";
 }
 
 /* INIT */
-if(localStorage.getItem(LOGIN_KEY)==="true"){showApp()}
+if(localStorage.getItem(LOGIN_KEY)==="true") showApp();
 renderProducts();
 updateCartCount();
 </script>
-
 </body>
 </html>
+
+    
